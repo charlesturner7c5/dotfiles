@@ -1,8 +1,10 @@
 ;; -*- mode: emacs-lisp -*-
 
 (menu-bar-mode -1)
-(tool-bar-mode -1)
-(scroll-bar-mode -1)
+(when (fboundp 'tool-bar-mode)
+  (tool-bar-mode -1))
+(when (fboundp 'scroll-bar-mode)
+  (scroll-bar-mode -1))
 (show-paren-mode 1)
 
 (require 'package)
@@ -26,6 +28,12 @@
   kept-old-versions 2
   version-control t)
 
+(setq-default revert-without-query '("."))
+
+;; Magit
+(require 'magit)
+(global-set-key (kbd "C-x g") 'magit-status)
+
 (setq user-full-name "Charlie Turner")
 (setq user-email-address "charlesturner7c5@gmail.com")
 
@@ -40,16 +48,12 @@
 (when (not indicate-empty-lines)
   (toggle-indicate-empty-lines))
 
-; TODO: Investigate Helm
 (ido-mode t)
 (setq ido-enable-flex-matching t)
 
-(menu-bar-mode -1)
-
-(when (fboundp 'tool-bar-mode)
-  (tool-bar-mode -1))
-(when (fboundp 'scroll-bar-mode)
-  (scroll-bar-mode -1))
+;; Yasnippet
+(require 'yasnippet)
+(yas-reload-all)
 
 (autoload 'zap-up-to-char "misc"
   "Kill up to, but not including ARGth occurrence of CHAR." t)
@@ -79,6 +83,7 @@
 (setq x-select-enable-clipboard t
       x-select-enable-primary t
       save-interprogram-paste-before-kill t
+      mouse-drag-copy-region t
       apropos-do-all t
       mouse-yank-at-point t
       require-final-newline t
@@ -100,7 +105,13 @@
 
 ;; Hypothesis: These modes are causing CC-mode's indentation to screw up intermitently.
 ;(require 'rainbow-delimiters)
-;(add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
+;;(add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
+
+;; General programming
+(add-hook 'prog-mode-hook
+	  '(lambda ()
+	     (flyspell-prog-mode)
+	     (yas-minor-mode)))
 
 (defun untabify-buffer ()
   (interactive)
@@ -122,6 +133,10 @@
   (interactive "r")
   (dolist (re '("\\\\│\·*\n" "\W*│\·*"))
     (replace-regexp re "" nil beg end)))
+
+(defun insert-current-date ()
+  (interactive)
+  (insert (shell-command-to-string "echo -n $(date +%Y-%m-%d)")))
 
 (global-set-key (kbd "C-x M-t") 'cleanup-region)
 (global-set-key (kbd "C-c n") 'cleanup-buffer)
@@ -165,6 +180,29 @@
             (when (derived-mode-p 'c-mode 'c++-mode 'java-mode)
               (ggtags-mode 1))))
 
+;; C++
+(defconst my-cc-style
+  '("cc-mode"
+    (c-offsets-alist . ((innamespace . [0])))))
+(c-add-style "my-cc-mode" my-cc-style)
+
+(defun my-c++-setup ()
+  (rebox-mode 1)
+  (setq comment-start "/* "
+	comment-end " */")
+  (setq rebox-style-loop '(23 25)))
+
+(add-hook 'c++-mode-hook #'my-c++-setup)
+
+;;; LLVM
+(add-to-list 'load-path
+	     (expand-file-name "~/src/llvm/utils/emacs"))
+(require 'llvm-mode)
+(require 'tablegen-mode)
+
+(add-to-list 'auto-mode-alist '("\\.ll\\'" . llvm-mode))
+(add-to-list 'auto-mode-alist '("\\.td\\'" . tablegen-mode))
+
 ;; In Gnulib, indent with spaces everywhere (not TABs).
 ;; Exceptions: Makefile and ChangeLog modes.
 (add-hook 'find-file-hook '(lambda ()
@@ -173,3 +211,6 @@
            (not (string-equal mode-name "Change Log"))
            (not (string-equal mode-name "Makefile")))
       (setq indent-tabs-mode nil))))
+
+;; Go
+(add-hook 'before-save-hook 'gofmt-before-save)
