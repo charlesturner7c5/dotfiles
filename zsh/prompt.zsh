@@ -71,7 +71,10 @@ directory_name() {
   echo "%{$fg_bold[cyan]%}%1/%\/%{$reset_color%}"
 }
 
-export PROMPT=$'\n$(rb_prompt)in $(directory_name) $(git_dirty)$(need_push)\n› '
+# Can use the neat Ruby / Git stuff above, but I don't like more
+# than a 200ms delay on my prompt being redrawn, so I've disabled
+# them.
+export PROMPT=$'[$(directory_name)] ($?)\n%% '
 set_prompt () {
   export RPROMPT="%{$fg_bold[cyan]%}%{$reset_color%}"
 }
