@@ -164,8 +164,10 @@
             (add-hook 'after-save-hook
                       (lambda ()
                         (executable-make-buffer-file-executable-if-script-p))
-                       nil
+                      nil
                       t)))
+
+(add-to-list 'auto-mode-alist '("\\.zsh\\'" . shell-script-mode))
 
 ;; Lisp ==================================================
 (setq inferior-lisp-program "/opt/bin/sbcl")
