@@ -37,7 +37,8 @@ setopt HIST_REDUCE_BLANKS
 #   like: git comm-[tab]
 setopt complete_aliases
 
-zle -N newtab
+autoload -U zsh-mime-setup
+zsh-mime-setup
 
 bindkey '^[[1;5C' forward-word
 bindkey '^[[1;5D' backward-word
@@ -45,11 +46,11 @@ bindkey '^A' beginning-of-line
 bindkey '^E' end-of-line
 bindkey '^[[3~' delete-char
 # TODO: What is this?
+zle -N newtab
 bindkey '^[^N' newtab
 bindkey '^?' backward-delete-char
 
 autoload replace-string
 zle -N replace-string
 zle -N replace-pattern replace-string
-
 bindkey '^[%' replace-pattern
