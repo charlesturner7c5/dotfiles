@@ -11,6 +11,9 @@
 [alias]
         co = checkout
         st = status
+        l = log --all --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
+        ll = log --graph --stat --abbrev-commit --decorate=full
+        lp = log --graph --patch --abbrev-commit --decorate=full
         promote = !$ZSH/bin/git-promote
         wtf     = !$ZSH/bin/git-wtf
         rank-contributors = !$ZSH/bin/git-rank-contributors
