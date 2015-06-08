@@ -48,3 +48,8 @@ bindkey '^[[3~' delete-char
 bindkey '^[^N' newtab
 bindkey '^?' backward-delete-char
 
+autoload replace-string
+zle -N replace-string
+zle -N replace-pattern replace-string
+
+bindkey '^[%' replace-pattern
