@@ -54,3 +54,18 @@ autoload replace-string
 zle -N replace-string
 zle -N replace-pattern replace-string
 bindkey '^[%' replace-pattern
+
+function create_new_gerrit_branch() {
+    local br_name=$(git rev-parse --abbrev-ref HEAD)
+    git push origin HEAD:review/$br_name
+}
+
+function delete_gerrit_branch() {
+    local br_name=$(git rev-parse --abbrev-ref HEAD)
+    git push origin --delete review/$br_name
+}
+
+function push_to_gerrit() {
+    local br_name=$(git rev-parse --abbrev-ref HEAD)
+    git push origin HEAD:refs/for/review/$br_name
+}
