@@ -20,7 +20,7 @@
 
 (server-start)
 
-(require 'helm-config)
+;(require 'helm-config)
 
 (setq backup-directory-alist `(("." . "~/.saves")))
 (setq delete-old-versions t
@@ -73,10 +73,10 @@
 (global-set-key (kbd "C-r") 'isearch-backward-regexp)
 (global-set-key (kbd "C-M-s") 'isearch-forward)
 (global-set-key (kbd "C-M-r") 'isearch-backward)
-(global-set-key (kbd "M-x") 'helm-M-x)
-(global-set-key (kbd "C-h f") 'helm-apropos)
-(global-set-key (kbd "C-x C-b") 'helm-buffers-list)
-(global-set-key (kbd "C-x C-f") 'helm-find-files)
+;(global-set-key (kbd "M-x") 'helm-M-x)
+;(global-set-key (kbd "C-h f") 'helm-apropos)
+;(global-set-key (kbd "C-x C-b") 'helm-buffers-list)
+;(global-set-key (kbd "C-x C-f") 'helm-find-files)
 
 (setq-default tab-width 4
               indent-tabs-mode nil)
