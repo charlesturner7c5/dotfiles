@@ -40,8 +40,16 @@ setopt complete_aliases
 autoload -U zsh-mime-setup
 zsh-mime-setup
 
+# Outside TMUX, these are the correct bindings
+# for C-Right, C-Left.
 bindkey '^[[1;5C' forward-word
 bindkey '^[[1;5D' backward-word
+# Inside TMUX, these are the correct bindings,
+# bindkey '^[[C' forward-word
+# bindkey '^[[D' backward-word
+# TODO: How to I select which ones to pick based on whether
+# I'm in TMUX or not?
+
 bindkey '^A' beginning-of-line
 bindkey '^E' end-of-line
 bindkey '^[[3~' delete-char
