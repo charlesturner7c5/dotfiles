@@ -20,16 +20,27 @@ function update_llvm() {
 # I find that -mem2reg is sufficient to have reasonable looking
 # IR for learning purposes, before a whole swathe of Shit You Don't
 # Understand kicks in.
-function view_ir() {
+function view_nice_ir() {
     file="${1%.*}"
     shift # for the pass options below
-    clang -emit-llvm -c $1
-    opt -mem2reg $@ $file.bc | llvm-dis
+    $CLANG -emit-llvm -c -O0 $file.c
+    $OPT -mem2reg $@ $file.bc | llvm-dis | less
+}
+
+function basic_ir() {
+    $CLANG -emit-llvm -c -O0 $1
+}
+
+function zopt() {
+    file="${1%.*}"
+    pass=$2
+    occur=$3
+    opt `popt --upto $pass,$occur` < $file.bc > $file\_$pass\_$occur.bc
 }
 
 function verify_ir() {
     file="${1%.*}"
-    clang -emit-llvm -c $1
+    $CLANG -emit-llvm -c $1
     if [ $? -eq 0 ]; then
         printf "\e[5;32;40m Passed\e[m\n"
     else

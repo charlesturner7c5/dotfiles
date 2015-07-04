@@ -1,3 +1,3 @@
 export LLVM_SRC=$HOME/src/llvm
-export LLVM_BLD=$LLVM_SRC/build
-export PATH="$LLVM_BUILD/bin:$PATH"
+export LLVM_BLD=$HOME/src/build-llvm
+export PATH="$LLVM_BLD/bin:$PATH"

@@ -1,0 +1,55 @@
+#!/usr/bin/env python
+# -*- mode: python -*-
+
+#
+# Tool for slicing and dicing the LLVM pass pipeline.
+#
+# Charlie Turner. Jun, 2015.
+#
+
+import subprocess as sp
+import re
+import os
+import argparse
+
+def capture_O2_pass_pipeline():
+    pass_structure = sp.check_output(["opt", "-O2", "-debug-pass=Structure", "-disable-output", "/dev/null"], stderr=sp.STDOUT)
+    pass_args = re.findall('Pass Arguments: (.*)', pass_structure)
+    assert len(pass_args) == 2, "Expected two pass managers"
+    fst_run = pass_args[0].strip()
+    snd_run = pass_args[1].strip()
+    all_args = fst_run + ' ' + snd_run
+    return all_args
+
+def find_all_substrings(haystack, s):
+    return [x.start() for x in re.finditer(s, haystack)]
+
+def intersperse(pipeline, what):
+    padded = ' ' + what + ' '
+    return padded.join(pipeline.split()).strip()
+
+def upto(pipeline, pass_name, n=0):
+    """Return the pipeline upto and including the given pass_name.
+    If n=2, return upto the second occurrence of the pass_name."""
+    assert n>=0, "n can not be negative"
+    occurs = find_all_substrings(pipeline, pass_name)
+    n = min(n, len(occurs)-1)
+    return pipeline[0:occurs[n]]
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description="""Opt tool. By default, the full -O2 pipeline is printed to STDOUT.
+    You can use the options below to change the default.""")
+    parser.add_argument('--upto', metavar='pass[,N]', help='Return standard pipeline upto Nth occurrence of pass. N defaults to 0.')
+
+    args = parser.parse_args()
+
+    pipeline = capture_O2_pass_pipeline()
+
+    if args.upto:
+        if ',' in args.upto:
+            stop, cnt = args.upto.split(',')
+            print upto(pipeline, '-' + stop, int(cnt))
+        else:
+            print upto(pipeline, '-' + args.upto)
+    else:
+        print pipeline
